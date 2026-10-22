@@ -1,0 +1,185 @@
+{
+  "suite": "employer-commission100-acceptance-20-v1",
+  "cases": [
+    {
+      "id": "employer-01a-closed-first-instance",
+      "question": "رای های ماده صد که در رای بدوی بسته شده اند",
+      "expected_status": "sql_generated",
+      "expected_recipe": "closed_first_instance_verdicts",
+      "expected_tables": ["TINFCommission100Verdict"],
+      "required_sql": ["V.TBASCommissionReferID IS NULL", "V.TBASCommission100ResultTypeID = 1", "ORDER BY V.FRegisterDate DESC, V.ID DESC"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-01b-closed-first-instance-variant",
+      "question": "رأی‌های بدوی بسته‌شده کمیسیون ماده ۱۰۰ را نمایش بده",
+      "expected_status": "sql_generated",
+      "expected_recipe": "closed_first_instance_verdicts",
+      "expected_tables": ["TINFCommission100Verdict"],
+      "required_sql": ["V.TBASCommissionReferID IS NULL", "V.TBASCommission100ResultTypeID = 1"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-02a-current-year-count",
+      "question": "تعداد پرونده‌های کمیسیون ماده ۱۰۰ ثبت شده در سال جاری؟",
+      "expected_status": "sql_generated",
+      "expected_recipe": "current_year_case_count",
+      "expected_tables": ["TINFCommission100", "TAccYear"],
+      "required_sql": ["COUNT_BIG(C.ID)", "Y.ID = C.TAccYearID", "Y.Active = 1"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-02b-active-year-count-variant",
+      "question": "در سال فعال چند پرونده ماده صد ثبت شده است؟",
+      "expected_status": "sql_generated",
+      "expected_recipe": "current_year_case_count",
+      "expected_tables": ["TINFCommission100", "TAccYear"],
+      "required_sql": ["COUNT_BIG(C.ID)", "INNER JOIN TAccYear", "Y.Active = 1"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-03-count-by-state",
+      "question": "وضعیت پرونده‌های کمیسیون ماده ۱۰۰ بر اساس مرحله",
+      "expected_status": "sql_generated",
+      "expected_recipe": "case_count_by_state",
+      "expected_tables": ["TINFCommission100", "TBASCommission100State"],
+      "required_sql": ["S.ID = C.TBASCommission100StateID", "COUNT_BIG(C.ID)", "GROUP BY S.ID, S.Title"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-04-without-final-closed-verdict",
+      "question": "پرونده‌هایی که هنوز رای نهایی (بسته) نگرفته‌اند؟",
+      "expected_status": "sql_generated",
+      "expected_recipe": "cases_without_final_closed_verdict",
+      "expected_tables": ["TINFCommission100", "TINFCommission100Verdict"],
+      "required_sql": ["WHERE NOT EXISTS", "V.TINFCommission100ID = C.ID", "V.ObsoleteTINFVerdictID IS NULL", "V.TBASCommission100ResultTypeID = 1"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-05-top-foul-area-year",
+      "question": "بیشترین نوع خلاف بر اساس منطقه و سال؟",
+      "expected_status": "sql_generated",
+      "expected_recipe": "top_foul_by_area_and_year",
+      "expected_tables": ["TINFCommission100", "TAccYear", "TINFCommission100Foul", "TBASCommission100Foul"],
+      "required_sql": ["DENSE_RANK() OVER", "PARTITION BY FC.Area, FC.Year", "RF.FoulRank = 1"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-06-objection-text",
+      "question": "پرونده‌هایی که اعتراض داشته‌اند و متن اعتراض چه بوده؟",
+      "expected_status": "sql_generated",
+      "expected_recipe": "objected_cases_with_text",
+      "expected_tables": ["TINFCommission100", "TINFCommission100Verdict"],
+      "required_sql": ["V.HasObjection = 1", "V.DescriptionObjection", "V.TINFCommission100ID = C.ID"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-07-full-lifecycle",
+      "question": "گزارش کامل روند یک پرونده خاص از ثبت تا اجرا؟",
+      "expected_status": "needs_clarification",
+      "expected_recipe": "full_case_lifecycle_report",
+      "expected_tables": [],
+      "required_sql": [],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-08-final-fouls-one-column",
+      "question": "تخلفات در رای نهایی پرونده ماده صد در یک ستون",
+      "expected_status": "sql_generated",
+      "expected_recipe": "final_verdict_fouls_single_column",
+      "expected_tables": ["TINFCommission100", "TINFCommission100Verdict", "TINFCommission100VerdictDetail", "TINFCommission100Foul", "TBASCommission100Foul"],
+      "required_sql": ["SELECT DISTINCT V.ID AS VerdictID", "CF.ID = VD.TINFCommission100FoulID", "STRING_AGG", "V.ObsoleteTINFVerdictID IS NULL"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-09a-review-execution-with-types",
+      "question": "پرونده های ماده 100 که در رای تجدید نظر به مرحله اجرای احکام رفته اند و رای های آن را نشان بده",
+      "expected_status": "sql_generated",
+      "expected_recipe": "review_verdicts_in_execution",
+      "expected_tables": ["TINFCommission100", "TINFCommission100Verdict", "TINFCommission100VerdictDetail", "TBASCommission100VerdictType", "TINFCommission100EjraConfirm"],
+      "required_sql": ["V.TBASCommissionReferID = 1", "V.ObsoleteTINFVerdictID IS NULL", "STRING_AGG", "E.TINFCommission100ID = C.ID"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-09b-execution-verdicts-variant",
+      "question": "رای های یک پرونده وضعیت خلاف در اجرای احکام",
+      "expected_status": "needs_clarification",
+      "expected_recipe": null,
+      "expected_tables": [],
+      "required_sql": [],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-10-review-execution",
+      "question": "پرونده های ماده 100 که در رای تجدید نظر به مرحله اجرای احکام رفته اند",
+      "expected_status": "sql_generated",
+      "expected_recipe": "review_verdicts_in_execution",
+      "expected_tables": ["TINFCommission100", "TINFCommission100Verdict", "TINFCommission100EjraConfirm"],
+      "required_sql": ["V.TBASCommissionReferID = 1", "V.ObsoleteTINFVerdictID IS NULL", "E.TINFCommission100ID = C.ID"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-11-average-cycle",
+      "question": "میانگین زمان کامل چرخه یک پرونده از ثبت تا اجرای کامل حکم به تفکیک نوع نتیجه رای؟",
+      "expected_status": "sql_generated",
+      "expected_recipe": "average_full_cycle_by_result",
+      "expected_tables": ["TINFCommission100", "TINFCommission100Verdict", "TINFCommission100EjraConfirm", "TBASCommission100ResultType"],
+      "required_sql": ["WITH CaseCycles", "MAX(EC.ERegisterDate)", "AVG(CAST(DATEDIFF(DAY", "GROUP BY RT.ID, RT.Name"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-12-changed-type-reduced-fine",
+      "question": "پرونده‌هایی که پس از اعتراض، نوع رای تغییر کرده و مبلغ جریمه کاهش یافته؟",
+      "expected_status": "sql_generated",
+      "expected_recipe": "changed_verdict_type_with_reduced_fine",
+      "expected_tables": ["TINFCommission100", "TINFCommission100Verdict", "TINFCommission100VerdictDetail"],
+      "required_sql": ["V2.ID = V1.ObsoleteTINFVerdictID", "V1.HasObjection = 1", "V2.SurchargePrice", "D2.TBASCommission100VerdictTypeID = D1.TBASCommission100VerdictTypeID"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-13-floor-fine-distribution",
+      "question": "تحلیل توزیع طبقات وقوع خلاف و ارتباط آن با مبلغ جریمه؟",
+      "expected_status": "sql_generated",
+      "expected_recipe": "floor_fine_distribution",
+      "expected_tables": ["TINFCommission100", "TINFCommission100Foul", "TINFCommission100Verdict", "TINFCommission100VerdictDetail", "TINFCommission100EjraConfirm"],
+      "required_sql": ["VD.TINFCommission100FoulID = CF.ID", "V.ID = VD.TINFCommission100VerdictID", "GROUP BY CF.Floor"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-14-structure-low-fine",
+      "question": "پرونده‌هایی که ارزش اعیانی TBASStructureDetailID ثبت شده اما جریمه صفر یا خیلی کم گرفته‌اند؟",
+      "expected_status": "sql_generated",
+      "expected_recipe": "structure_value_with_low_fine",
+      "expected_tables": ["TINFCommission100", "TINFCommission100Verdict", "TINFCommission100VerdictDetail"],
+      "required_sql": ["VD.TINFCommission100VerdictID = V.ID", "VD.TBASStructureDetailID IS NOT NULL", "COALESCE(VD.Price, 0) < 1000000"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-15-combined-execution",
+      "question": "پرونده‌هایی که در مرحله اجرا هم قلع و هم جریمه داشته‌اند ترکیبی؟",
+      "expected_status": "sql_generated",
+      "expected_recipe": "combined_destruction_and_fine_execution",
+      "expected_tables": ["TINFCommission100", "TINFCommission100EjraConfirm", "TINFCommission100Verdict", "TINFCommission100VerdictDetail"],
+      "required_sql": ["EC.Destruction = 1", "EC.Surcharge = 1", "VD.TINFCommission100VerdictID = V.ID", "SUM(COALESCE(VD.Price, 0))"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-16-most-used-value-type",
+      "question": "پرکاربردترین واحد تخلف در پرونده‌ها؟",
+      "expected_status": "sql_generated",
+      "expected_recipe": "most_used_violation_value_type",
+      "expected_tables": ["TINFCommission100VerdictDetail", "TBASCommission100ValueType"],
+      "required_sql": ["VT.ID = VD.TBASCommission100ValueTypeID", "COUNT_BIG(VD.ID)", "ORDER BY UsageCount DESC"],
+      "expected_parameters": {}
+    },
+    {
+      "id": "employer-17-final-verdict-over-60-days",
+      "question": "پرونده‌هایی که زمان بین ثبت و صدور رای نهایی بیش از ۶۰ روز طول کشیده؟",
+      "expected_status": "sql_generated",
+      "expected_recipe": "final_verdict_over_60_days",
+      "expected_tables": ["TINFCommission100", "TINFCommission100Verdict"],
+      "required_sql": ["DATEDIFF(DAY, C.ERegisterDate, V.ERegisterDate) > 60", "V.TBASCommission100ResultTypeID = 1", "V.ObsoleteTINFVerdictID IS NULL"],
+      "expected_parameters": {}
+    }
+  ]
+}

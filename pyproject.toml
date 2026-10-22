@@ -1,0 +1,72 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "persian-nl2sql-mvp"
+version = "0.9.0"
+description = "Hybrid Schema-RAG + Transformer reranker + LLM backend for safe Persian NL2SQL"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  # Keep Starlette's stable TestClient/lifespan contract used by this release.
+  "fastapi>=0.115,<0.116",
+  "anyio>=4.5,<4.10",
+  "uvicorn[standard]>=0.34,<1",
+  "pydantic>=2.10,<3",
+  "pydantic-settings>=2.7,<3",
+  # NumPy 2.5 wheels require x86-v2 and fail on older production CPUs.
+  "numpy>=2.0,<2.3",
+  "openai>=1.68,<3",
+  "httpx[socks]>=0.28,<1",
+  "PyJWT[crypto]>=2.10,<3",
+  "sqlglot>=26,<31",
+  "SQLAlchemy>=2.0,<3",
+  "alembic>=1.14,<2",
+  "pyodbc>=5.2,<6",
+  "python-json-logger>=3.2,<5",
+  "redis>=5.2,<8",
+  "qdrant-client>=1.18,<2",
+  "neo4j>=5.27,<6",
+]
+
+[project.optional-dependencies]
+transformers = [
+  "sentence-transformers>=3.4,<6",
+]
+reranker-onnx = [
+  "huggingface-hub>=0.27,<1",
+  "onnxruntime>=1.20,<2",
+  "transformers>=4.41,<5",
+]
+postgres = [
+  "psycopg[binary]>=3.2,<4",
+]
+dev = [
+  "pytest>=8.3,<10",
+  "pytest-asyncio>=0.25,<2",
+  "httpx>=0.28,<1",
+  "ruff>=0.9,<1",
+]
+
+[project.scripts]
+nl2sql = "nl2sql.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app/nl2sql"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/alembic", "/alembic.ini", "/app", "/docs", "/frontend", "/Dockerfile", "/README.md", "/docker-compose.yml", "/docker-entrypoint.sh", "/pyproject.toml"]
+exclude = ["/frontend/node_modules", "/frontend/dist"]
+
+[tool.pytest.ini_options]
+pythonpath = ["app"]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

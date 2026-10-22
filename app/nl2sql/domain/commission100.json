@@ -1,0 +1,432 @@
+{
+  "domain": "commission100",
+  "version": "2026.07.6",
+  "concepts": [
+    {
+      "id": "commission_case",
+      "synonyms": ["ماده 100", "ماده صد", "کمیسیون ماده 100", "کمیسیون ماده صد", "وضعیت خلاف", "پرونده خلاف", "پرونده ماده صد", "پرونده ماده 100", "آخرین پرونده ها", "پرونده های اخیر"],
+      "tables": ["TINFCommission100"],
+      "columns": ["TINFCommission100.ID", "TINFCommission100.Number", "TINFCommission100.TINFBuildingNumber", "TINFCommission100.TBASCommission100StateID", "TINFCommission100.FRegisterDate", "TINFCommission100.ERegisterDate", "TINFCommission100.TAccYearID", "TINFCommission100.Area", "TINFCommission100.TINFUserRegionID"]
+    },
+    {
+      "id": "case_state",
+      "synonyms": ["وضعیت پرونده", "مرحله خلاف", "بر اساس مرحله", "آخرین وضعیت", "وضعیت ماده صد", "مختومه دستی", "دستی مختومه"],
+      "tables": ["TINFCommission100", "TBASCommission100State"],
+      "columns": ["TINFCommission100.TBASCommission100StateID", "TBASCommission100State.ID", "TBASCommission100State.Name", "TBASCommission100State.Title"]
+    },
+    {
+      "id": "verdict",
+      "synonyms": ["رای", "رأی", "حکم", "رای بدوی", "تجدید نظر", "رای نهایی", "آخرین رای", "شماره رای", "اعتراض"],
+      "tables": ["TINFCommission100Verdict", "TBASCommission100ResultType"],
+      "columns": ["TINFCommission100Verdict.ID", "TINFCommission100Verdict.Number", "TINFCommission100Verdict.TINFCommission100ID", "TINFCommission100Verdict.FRegisterDate", "TINFCommission100Verdict.ERegisterDate", "TINFCommission100Verdict.ObsoleteTINFVerdictID", "TINFCommission100Verdict.TBASCommission100ResultTypeID", "TINFCommission100Verdict.TBASCommissionReferID", "TINFCommission100Verdict.HasObjection", "TINFCommission100Verdict.DescriptionObjection", "TINFCommission100Verdict.SurchargePrice"]
+    },
+    {
+      "id": "verdict_detail",
+      "synonyms": ["جزئیات رای", "جریمه های رای", "مبلغ تخلف", "نوع رای", "ارزش اعیانی", "واحد تخلف"],
+      "tables": ["TINFCommission100VerdictDetail", "TBASCommission100VerdictType", "TBASCommission100ValueType"],
+      "columns": ["TINFCommission100VerdictDetail.ID", "TINFCommission100VerdictDetail.TINFCommission100VerdictID", "TINFCommission100VerdictDetail.TINFCommission100FoulID", "TINFCommission100VerdictDetail.TBASCommission100VerdictTypeID", "TINFCommission100VerdictDetail.TBASCommission100ValueTypeID", "TINFCommission100VerdictDetail.TBASStructureDetailID", "TINFCommission100VerdictDetail.Price", "TINFCommission100VerdictDetail.Amount", "TINFCommission100VerdictDetail.TradingValue"]
+    },
+    {
+      "id": "foul",
+      "synonyms": ["خلاف", "تخلف", "نوع خلاف", "تخلفات", "طبقه وقوع خلاف"],
+      "tables": ["TINFCommission100Foul", "TBASCommission100Foul"],
+      "columns": ["TINFCommission100Foul.ID", "TINFCommission100Foul.TINFCommission100ID", "TINFCommission100Foul.TBASCommission100FoulID", "TINFCommission100Foul.Floor", "TBASCommission100Foul.ID", "TBASCommission100Foul.Name"]
+    },
+    {
+      "id": "execution",
+      "synonyms": ["اجرا", "اجرای احکام", "اجرای حکم", "قلع", "تخریب", "جریمه شده"],
+      "tables": ["TINFCommission100EjraConfirm"],
+      "columns": ["TINFCommission100EjraConfirm.ID", "TINFCommission100EjraConfirm.TINFCommission100ID", "TINFCommission100EjraConfirm.Destruction", "TINFCommission100EjraConfirm.Surcharge", "TINFCommission100EjraConfirm.DestructionDescription", "TINFCommission100EjraConfirm.SurchargeDescription", "TINFCommission100EjraConfirm.FRegisterDate", "TINFCommission100EjraConfirm.ERegisterDate"]
+    },
+    {
+      "id": "accounting_year",
+      "synonyms": ["سال جاری", "سال فعال", "به تفکیک سال", "بر اساس سال"],
+      "tables": ["TAccYear"],
+      "columns": ["TAccYear.ID", "TAccYear.Year", "TAccYear.Active"]
+    },
+    {
+      "id": "registering_user",
+      "synonyms": ["کاربر ثبت کننده", "کاربران", "ثبت شده توسط", "اپراتور"],
+      "tables": ["TINFUser", "TINFUserRegion"],
+      "columns": ["TINFUser.ID", "TINFUser.UserName", "TINFUserRegion.ID", "TINFUserRegion.TINFUserID"]
+    }
+  ],
+  "metrics": [
+    {
+      "id": "verdict_detail_fine_total",
+      "synonyms": ["جمع جریمه ها", "مجموع جریمه", "جمع مبلغ جریمه", "کل جریمه", "مبلغ جریمه"],
+      "tables": ["TINFCommission100VerdictDetail"],
+      "columns": ["TINFCommission100VerdictDetail.Price"],
+      "definition": "SUM(COALESCE(TINFCommission100VerdictDetail.Price, 0)); مبلغ جزئیات رأی است و با مبلغ سربرگ رأی مخلوط نمی‌شود."
+    },
+    {
+      "id": "verdict_header_surcharge",
+      "synonyms": ["جریمه رای", "مبلغ جریمه رای", "کاهش جریمه"],
+      "tables": ["TINFCommission100Verdict"],
+      "columns": ["TINFCommission100Verdict.SurchargePrice"],
+      "definition": "TINFCommission100Verdict.SurchargePrice; مبلغ جریمه سربرگ رأی برای مقایسه نسخه‌های رأی."
+    },
+    {
+      "id": "registered_commission_count",
+      "synonyms": ["تعداد پرونده های ثبت شده", "تعداد پرونده هر کاربر", "تعداد وضعیت خلاف کاربر"],
+      "tables": ["TINFUser", "TINFUserRegion", "TINFCommission100"],
+      "columns": ["TINFUser.ID", "TINFUserRegion.TINFUserID", "TINFCommission100.TINFUserRegionID"],
+      "definition": "COUNT(TINFCommission100.ID) with LEFT JOIN from TINFUser so users with zero cases remain."
+    },
+    {
+      "id": "case_count",
+      "synonyms": ["تعداد پرونده", "تعداد پرونده ها", "فراوانی پرونده"],
+      "tables": ["TINFCommission100"],
+      "columns": ["TINFCommission100.ID"],
+      "definition": "COUNT_BIG(TINFCommission100.ID) پس از اعمال فیلترهای دامنه."
+    },
+    {
+      "id": "cycle_duration",
+      "synonyms": ["میانگین زمان", "زمان چرخه", "بیش از 60 روز", "بیش از ۶۰ روز"],
+      "tables": ["TINFCommission100", "TINFCommission100Verdict", "TINFCommission100EjraConfirm"],
+      "columns": ["TINFCommission100.ERegisterDate", "TINFCommission100Verdict.ERegisterDate", "TINFCommission100EjraConfirm.ERegisterDate"],
+      "definition": "DATEDIFF(DAY, تاریخ ثبت میلادی پرونده, تاریخ رخداد انتهایی)."
+    }
+  ],
+  "business_rules": [
+    {
+      "id": "current_verdict",
+      "triggers": ["آخرین رای", "آخرین رأی", "رای نهایی", "رای فعلی", "صدور رای نهایی"],
+      "text": "رأی جاری پرونده رکوردی است که ObsoleteTINFVerdictID آن NULL باشد؛ در انتخاب یک رکورد، FRegisterDate و سپس ID نزولی استفاده می‌شود."
+    },
+    {
+      "id": "verdict_chain_direction",
+      "triggers": ["پس از اعتراض", "تغییر رای", "رای تغییر کرده"],
+      "text": "در زنجیره اصلاح رأی، شناسه رأی جدید در ObsoleteTINFVerdictID رأی قبلی قرار می‌گیرد؛ اتصال صحیح OldVerdict.ObsoleteTINFVerdictID = NewVerdict.ID است."
+    },
+    {
+      "id": "case_number",
+      "triggers": ["شماره پرونده", "شماره وضعیت خلاف", "پرونده شماره"],
+      "text": "شماره قابل مشاهده پرونده TINFCommission100.Number است، نه ID."
+    },
+    {
+      "id": "verdict_number",
+      "triggers": ["شماره رای", "شماره رأی"],
+      "text": "شماره قابل مشاهده رأی TINFCommission100Verdict.Number است."
+    },
+    {
+      "id": "fine_semantics",
+      "triggers": ["جریمه", "مبلغ جریمه"],
+      "text": "VerdictDetail.Price مبلغ جزئیات و Verdict.SurchargePrice مبلغ سربرگ رأی است؛ این دو بدون درخواست صریح با هم جمع نمی‌شوند."
+    },
+    {
+      "id": "property_number",
+      "triggers": ["شماره ملک", "هر ملک", "به تفکیک ملک"],
+      "text": "شماره سیستمی ملک در TINFCommission100.TINFBuildingNumber نگه‌داری می‌شود؛ TINFCommission100.Number شماره پرونده ماده ۱۰۰ است."
+    },
+    {
+      "id": "verdict_stage",
+      "triggers": ["مرحله رای", "مرحله رأی", "بدوی", "تجدید نظر", "تجدیدنظر", "دیوان عدالت", "هم عرض"],
+      "text": "مرحله رأی از TINFCommission100Verdict.TBASCommissionReferID تعیین می‌شود: NULL بدوی، 1 تجدیدنظر، 2 دیوان عدالت و 3 هم‌عرض است."
+    },
+    {
+      "id": "recent_verdict_period",
+      "triggers": ["یک سال اخیر", "1 سال اخیر", "سال گذشته"],
+      "text": "برای بازه یک‌سال اخیر رأی از تاریخ میلادی TINFCommission100Verdict.ERegisterDate و DATEADD(YEAR, -1, CAST(GETDATE() AS date)) استفاده می‌شود."
+    },
+    {
+      "id": "manual_case_closure",
+      "triggers": ["مختومه دستی", "دستی مختومه"],
+      "text": "وضعیت مختومه دستی پرونده با TINFCommission100.TBASCommission100StateID = 4 مشخص می‌شود."
+    },
+    {
+      "id": "destruction_verdict_type",
+      "triggers": ["رای به تخریب", "رأی به تخریب", "موجب تخریب", "موجبه تخریب", "قلع"],
+      "text": "رأی موجب تخریب از جزئیات رأی و شرط TINFCommission100VerdictDetail.TBASCommission100VerdictTypeID = 1 تشخیص داده می‌شود؛ این مفهوم با فلگ اجرای تخریب یکی نیست."
+    },
+    {
+      "id": "verdict_detail_join",
+      "triggers": ["جزئیات رای", "جریمه", "نوع رای", "ارزش اعیانی"],
+      "text": "اتصال جزئیات رأی فقط از مسیر Commission.ID = Verdict.TINFCommission100ID و Verdict.ID = VerdictDetail.TINFCommission100VerdictID معتبر است."
+    },
+    {
+      "id": "current_year",
+      "triggers": ["سال جاری", "سال فعال"],
+      "text": "سال جاری با اتصال TINFCommission100.TAccYearID به TAccYear.ID و شرط TAccYear.Active = 1 تعیین می‌شود."
+    },
+    {
+      "id": "latest_case_list",
+      "triggers": ["آخرین پرونده ها", "جدیدترین پرونده ها", "پرونده های اخیر"],
+      "text": "فهرست پرونده‌های اخیر به‌طور پیش‌فرض TOP (20) و با FRegisterDate سپس ID نزولی مرتب می‌شود."
+    }
+  ],
+  "sensitive_columns": [
+    "TINFUser.Password",
+    "TINFUser.AttackAttemptCount",
+    "TINFUser.FailedLoginCount",
+    "TINFPersonnel.NationalCode"
+  ],
+  "mask_patterns": ["NationalCode", "Mobile", "Phone", "Email", "Address", "PostalCode"],
+  "roles": {
+    "system_admin": {"tables": ["*"], "allow_sensitive": false},
+    "report_analyst": {
+      "tables": ["TINFCommission100", "TBASCommission100State", "TINFCommission100Verdict", "TINFCommission100VerdictDetail", "TINFCommission100Foul", "TBASCommission100Foul", "TINFCommission100EjraConfirm", "TBASCommission100ResultType", "TBASCommission100VerdictType", "TBASCommission100ValueType", "TAccYear", "TINFUser", "TINFUserRegion"],
+      "allow_sensitive": false
+    },
+    "commission_operator": {
+      "tables": ["TINFCommission100", "TBASCommission100State", "TINFCommission100Verdict", "TINFCommission100VerdictDetail", "TINFCommission100Foul", "TBASCommission100Foul", "TINFCommission100EjraConfirm", "TBASCommission100ResultType", "TBASCommission100VerdictType", "TBASCommission100ValueType", "TAccYear"],
+      "allow_sensitive": false
+    },
+    "auditor": {
+      "tables": ["TINFCommission100", "TBASCommission100State", "TINFCommission100Verdict", "TINFCommission100VerdictDetail", "TINFCommission100Foul", "TBASCommission100Foul", "TINFCommission100EjraConfirm", "TBASCommission100ResultType", "TBASCommission100VerdictType", "TBASCommission100ValueType", "TAccYear", "TINFUser", "TINFUserRegion"],
+      "allow_sensitive": false
+    }
+  },
+  "recipes": [
+    {
+      "id": "manually_closed_cases_with_destruction_verdict",
+      "priority": 250,
+      "required_groups": [["تخریب", "قلع"], ["مختومه دستی", "دستی مختومه"]],
+      "forbidden_terms": [],
+      "required_tables": ["TINFCommission100", "TBASCommission100State", "TINFCommission100Verdict", "TINFCommission100VerdictDetail", "TBASCommission100VerdictType"],
+      "sql": "SELECT C.ID AS CommissionID,\n       C.Number AS CommissionNumber,\n       C.TINFBuildingNumber AS PropertyNumber,\n       S.Title AS CaseState,\n       V.ID AS VerdictID,\n       V.Number AS VerdictNumber,\n       V.FRegisterDate AS VerdictRegisterDate,\n       CASE\n           WHEN V.TBASCommissionReferID IS NULL THEN N'بدوی'\n           WHEN V.TBASCommissionReferID = 1 THEN N'تجدیدنظر'\n           WHEN V.TBASCommissionReferID = 2 THEN N'دیوان عدالت'\n           WHEN V.TBASCommissionReferID = 3 THEN N'هم‌عرض'\n           ELSE N'مرحله نامشخص'\n       END AS VerdictStage,\n       VT.Title AS VerdictType,\n       VD.Description AS VerdictDetailDescription\nFROM TINFCommission100 AS C\nINNER JOIN TBASCommission100State AS S\n    ON S.ID = C.TBASCommission100StateID\nINNER JOIN TINFCommission100Verdict AS V\n    ON V.TINFCommission100ID = C.ID\nINNER JOIN TINFCommission100VerdictDetail AS VD\n    ON VD.TINFCommission100VerdictID = V.ID\nINNER JOIN TBASCommission100VerdictType AS VT\n    ON VT.ID = VD.TBASCommission100VerdictTypeID\nWHERE C.TBASCommission100StateID = 4\n  AND V.TBASCommission100ResultTypeID = 1\n  AND VD.TBASCommission100VerdictTypeID = 1\nORDER BY C.Number, V.FRegisterDate DESC, V.ID DESC, VD.ID",
+      "explanation_fa": "پرونده‌های مختومه دستی (وضعیت ۴) نمایش داده می‌شوند که در هر یک از مراحل رأی، حداقل یک جزئیات رأی با نوع «رأی به تخریب» (نوع ۱) دارند. هر سطر یک جزئیات رأی تخریب است و مرحله رأی نیز جداگانه مشخص می‌شود.",
+      "parameter": null
+    },
+    {
+      "id": "recent_fines_by_property_stage_and_type",
+      "priority": 240,
+      "required_groups": [["شماره ملک", "هر ملک", "تفکیک ملک"], ["جریمه"], ["مرحله رای", "مرحله رأی", "بدوی", "تجدید نظر", "تجدیدنظر"], ["یک سال اخیر", "1 سال اخیر", "سال گذشته"], ["سرجمع", "جمع کل", "جمع هر مرحله"]],
+      "forbidden_terms": [],
+      "required_tables": ["TINFCommission100", "TINFCommission100Verdict", "TINFCommission100VerdictDetail", "TBASCommission100VerdictType"],
+      "sql": "SELECT\n    CASE\n        WHEN GROUPING(C.TINFBuildingNumber) = 1 THEN N'جمع کل همه املاک'\n        ELSE C.TINFBuildingNumber\n    END AS PropertyNumber,\n    CASE\n        WHEN GROUPING(C.TINFBuildingNumber) = 1 THEN N'جمع کل'\n        WHEN GROUPING(V.TBASCommissionReferID) = 1 THEN N'جمع ملک'\n        WHEN V.TBASCommissionReferID IS NULL THEN N'بدوی'\n        WHEN V.TBASCommissionReferID = 1 THEN N'تجدیدنظر'\n        WHEN V.TBASCommissionReferID = 2 THEN N'دیوان عدالت'\n        WHEN V.TBASCommissionReferID = 3 THEN N'هم‌عرض'\n        ELSE N'مرحله نامشخص'\n    END AS VerdictStage,\n    CASE\n        WHEN GROUPING(V.TBASCommissionReferID) = 1 THEN N'همه انواع رأی'\n        WHEN GROUPING(VT.Title) = 1 THEN N'جمع مرحله'\n        ELSE VT.Title\n    END AS VerdictType,\n    SUM(COALESCE(VD.Price, 0)) AS FineTotal\nFROM TINFCommission100 AS C\nINNER JOIN TINFCommission100Verdict AS V\n    ON V.TINFCommission100ID = C.ID\nINNER JOIN TINFCommission100VerdictDetail AS VD\n    ON VD.TINFCommission100VerdictID = V.ID\nINNER JOIN TBASCommission100VerdictType AS VT\n    ON VT.ID = VD.TBASCommission100VerdictTypeID\nWHERE V.TBASCommission100ResultTypeID = 1\n  AND V.ERegisterDate >= DATEADD(YEAR, -1, CAST(GETDATE() AS date))\nGROUP BY GROUPING SETS (\n    (C.TINFBuildingNumber, V.TBASCommissionReferID, VT.Title),\n    (C.TINFBuildingNumber, V.TBASCommissionReferID),\n    (C.TINFBuildingNumber),\n    ()\n)\nORDER BY\n    GROUPING(C.TINFBuildingNumber),\n    C.TINFBuildingNumber,\n    GROUPING(V.TBASCommissionReferID),\n    V.TBASCommissionReferID,\n    GROUPING(VT.Title),\n    VT.Title",
+      "explanation_fa": "جریمه جزئیات رأی‌های بسته‌شده یک‌سال اخیر از VerdictDetail.Price محاسبه می‌شود؛ خروجی ابتدا نوع رأی را در هر مرحله، سپس جمع مرحله، جمع هر ملک و در پایان جمع کل همه املاک نشان می‌دهد.",
+      "parameter": null
+    },
+    {
+      "id": "first_instance_verdicts_in_execution",
+      "priority": 220,
+      "required_groups": [["رای بدوی", "رأی بدوی", "بدوی"], ["اجرای احکام", "اجرای حکم", "مرحله اجرا"]],
+      "forbidden_terms": ["تجدید نظر", "تجدیدنظر"],
+      "required_tables": ["TINFCommission100", "TBASCommission100State", "TINFCommission100Verdict", "TINFCommission100EjraConfirm"],
+      "sql": "SELECT C.ID, C.Number AS CommissionNumber, S.Name AS StateName,\n       V.Number AS VerdictNumber, V.FRegisterDate AS VerdictRegisterDate,\n       EC.Number AS ExecutionNumber, EC.FRegisterDate AS ExecutionRegisterDate,\n       EC.Destruction, EC.Surcharge\nFROM TINFCommission100 AS C\nINNER JOIN TBASCommission100State AS S ON S.ID = C.TBASCommission100StateID\nINNER JOIN TINFCommission100Verdict AS V ON V.TINFCommission100ID = C.ID\nCROSS APPLY (\n    SELECT TOP (1) E.ID, E.Number, E.FRegisterDate, E.ERegisterDate,\n           E.Destruction, E.Surcharge\n    FROM TINFCommission100EjraConfirm AS E\n    WHERE E.TINFCommission100ID = C.ID\n    ORDER BY E.ERegisterDate DESC, E.ID DESC\n) AS EC\nWHERE V.TBASCommissionReferID IS NULL\n  AND V.TBASCommission100ResultTypeID = 1\n  AND V.ObsoleteTINFVerdictID IS NULL\nORDER BY EC.ERegisterDate DESC, EC.ID DESC, C.ID DESC",
+      "explanation_fa": "پرونده‌هایی نمایش داده می‌شوند که رأی جاری و بسته‌شده آن‌ها بدوی است و حداقل یک اجرای حکم ثبت‌شده دارند؛ آخرین رکورد اجرا به‌صورت قطعی انتخاب می‌شود.",
+      "parameter": null
+    },
+    {
+      "id": "closed_review_verdicts_with_fine",
+      "priority": 215,
+      "required_groups": [["تجدید نظر", "تجدیدنظر"], ["جریمه"], ["بسته شده", "بسته باشد", "رای بسته", "رأی بسته"]],
+      "forbidden_terms": ["اجرای احکام", "اجرای حکم", "مرحله اجرا"],
+      "required_tables": ["TINFCommission100", "TBASCommission100State", "TINFCommission100Verdict"],
+      "sql": "SELECT C.ID, C.Number AS CommissionNumber, S.Name AS StateName,\n       V.Number AS VerdictNumber, V.FRegisterDate AS VerdictRegisterDate,\n       V.SurchargePrice AS VerdictFine\nFROM TINFCommission100 AS C\nINNER JOIN TBASCommission100State AS S ON S.ID = C.TBASCommission100StateID\nINNER JOIN TINFCommission100Verdict AS V ON V.TINFCommission100ID = C.ID\nWHERE V.TBASCommissionReferID = 1\n  AND V.TBASCommission100ResultTypeID = 1\n  AND V.ObsoleteTINFVerdictID IS NULL\n  AND COALESCE(V.SurchargePrice, 0) > 0\nORDER BY V.FRegisterDate DESC, V.ID DESC, C.ID DESC",
+      "explanation_fa": "پرونده‌هایی نمایش داده می‌شوند که رأی جاری تجدیدنظر آن‌ها بسته شده و مبلغ جریمه سربرگ رأی بیشتر از صفر است.",
+      "parameter": null
+    },
+    {
+      "id": "closed_first_instance_verdicts",
+      "priority": 200,
+      "required_groups": [["رای بدوی", "رای های بدوی", "رای های ماده صد که در رای بدوی"], ["بسته شده", "بسته شده اند", "نتیجه بسته"]],
+      "forbidden_terms": ["تجدید نظر", "اجرای احکام"],
+      "required_tables": ["TINFCommission100Verdict"],
+      "sql": "SELECT V.ID, V.Number AS VerdictNumber, V.TINFCommission100ID, V.FRegisterDate, V.Description\nFROM TINFCommission100Verdict AS V\nWHERE V.TBASCommissionReferID IS NULL\n  AND V.TBASCommission100ResultTypeID = 1\nORDER BY V.FRegisterDate DESC, V.ID DESC",
+      "explanation_fa": "رأی‌های مرحله بدوی با نبود مرجع کمیسیون و نتیجه بسته‌شده انتخاب می‌شوند؛ خروجی فقط ستون‌های لازم را برمی‌گرداند.",
+      "parameter": null
+    },
+    {
+      "id": "current_year_case_count",
+      "priority": 190,
+      "required_groups": [["تعداد پرونده", "چند پرونده"], ["سال جاری", "سال فعال"]],
+      "forbidden_terms": ["کاربر"],
+      "required_tables": ["TINFCommission100", "TAccYear"],
+      "sql": "SELECT COUNT_BIG(C.ID) AS CommissionCaseCount\nFROM TINFCommission100 AS C\nINNER JOIN TAccYear AS Y ON Y.ID = C.TAccYearID\nWHERE Y.Active = 1",
+      "explanation_fa": "تعداد پرونده‌ها فقط برای سال حسابداری فعال و از طریق اتصال شناسه سال محاسبه می‌شود.",
+      "parameter": null
+    },
+    {
+      "id": "case_count_by_state",
+      "priority": 190,
+      "required_groups": [["وضعیت پرونده", "وضعیت پرونده ها"], ["بر اساس مرحله", "به تفکیک مرحله", "بر حسب مرحله"]],
+      "forbidden_terms": ["شماره پرونده", "آخرین وضعیت"],
+      "required_tables": ["TINFCommission100", "TBASCommission100State"],
+      "sql": "SELECT S.ID AS StateID, S.Title AS StateTitle, COUNT_BIG(C.ID) AS CaseCount\nFROM TINFCommission100 AS C\nINNER JOIN TBASCommission100State AS S ON S.ID = C.TBASCommission100StateID\nGROUP BY S.ID, S.Title\nORDER BY CaseCount DESC, S.ID",
+      "explanation_fa": "پرونده‌ها بر اساس شناسه و عنوان مرحله گروه‌بندی می‌شوند تا عنوان‌های هم‌نام با هم مخلوط نشوند.",
+      "parameter": null
+    },
+    {
+      "id": "cases_without_final_closed_verdict",
+      "priority": 190,
+      "required_groups": [["رای نهایی", "رأی نهایی"], ["هنوز", "نگرفته", "بسته نگرفته", "بدون رای نهایی"]],
+      "forbidden_terms": ["بیش از 60", "بیش از ۶۰"],
+      "required_tables": ["TINFCommission100", "TINFCommission100Verdict"],
+      "sql": "SELECT C.ID, C.Number AS CommissionNumber, C.Description, C.FRegisterDate\nFROM TINFCommission100 AS C\nWHERE NOT EXISTS (\n    SELECT 1\n    FROM TINFCommission100Verdict AS V\n    WHERE V.TINFCommission100ID = C.ID\n      AND V.ObsoleteTINFVerdictID IS NULL\n      AND V.TBASCommission100ResultTypeID = 1\n)\nORDER BY C.FRegisterDate DESC, C.ID DESC",
+      "explanation_fa": "پرونده‌ای باز تلقی می‌شود که هیچ رأی جاریِ بسته‌شده نداشته باشد؛ پرونده‌های فاقد هرگونه رأی نیز حفظ می‌شوند.",
+      "parameter": null
+    },
+    {
+      "id": "top_foul_by_area_and_year",
+      "priority": 190,
+      "required_groups": [["بیشترین نوع خلاف", "پرتکرارترین نوع خلاف", "بیشترین تخلف"], ["منطقه"], ["سال"]],
+      "forbidden_terms": [],
+      "required_tables": ["TINFCommission100", "TAccYear", "TINFCommission100Foul", "TBASCommission100Foul"],
+      "sql": "WITH FoulCounts AS (\n    SELECT C.Area, Y.Year, BF.Name AS FoulName, COUNT_BIG(*) AS FoulCount\n    FROM TINFCommission100 AS C\n    INNER JOIN TAccYear AS Y ON Y.ID = C.TAccYearID\n    INNER JOIN TINFCommission100Foul AS CF ON CF.TINFCommission100ID = C.ID\n    INNER JOIN TBASCommission100Foul AS BF ON BF.ID = CF.TBASCommission100FoulID\n    GROUP BY C.Area, Y.Year, BF.Name\n), RankedFouls AS (\n    SELECT FC.Area, FC.Year, FC.FoulName, FC.FoulCount,\n           DENSE_RANK() OVER (PARTITION BY FC.Area, FC.Year ORDER BY FC.FoulCount DESC) AS FoulRank\n    FROM FoulCounts AS FC\n)\nSELECT RF.Area, RF.Year, RF.FoulName, RF.FoulCount\nFROM RankedFouls AS RF\nWHERE RF.FoulRank = 1\nORDER BY RF.Year DESC, RF.Area, RF.FoulName",
+      "explanation_fa": "ابتدا فراوانی هر نوع خلاف در هر منطقه و سال محاسبه و سپس رتبه اول هر گروه، با حفظ موارد هم‌رتبه، انتخاب می‌شود.",
+      "parameter": null
+    },
+    {
+      "id": "objected_cases_with_text",
+      "priority": 190,
+      "required_groups": [["اعتراض داشته", "اعتراض ثبت شده", "دارای اعتراض"], ["متن اعتراض", "شرح اعتراض", "اعتراض چه بوده"]],
+      "forbidden_terms": ["کاهش جریمه", "تغییر کرده"],
+      "required_tables": ["TINFCommission100", "TINFCommission100Verdict"],
+      "sql": "SELECT C.Number AS CommissionNumber, V.Number AS VerdictNumber, V.DescriptionObjection\nFROM TINFCommission100 AS C\nINNER JOIN TINFCommission100Verdict AS V ON V.TINFCommission100ID = C.ID\nWHERE V.HasObjection = 1\nORDER BY C.Number, V.FRegisterDate, V.ID",
+      "explanation_fa": "همه رأی‌هایی که اعتراض روی آن‌ها ثبت شده همراه با شماره پرونده، شماره رأی و متن اعتراض نمایش داده می‌شوند.",
+      "parameter": null
+    },
+    {
+      "id": "full_case_lifecycle_report",
+      "priority": 190,
+      "required_groups": [["گزارش کامل روند", "روند یک پرونده", "روند پرونده"], ["ثبت تا اجرا", "از ثبت تا اجرا", "تا اجرای حکم"]],
+      "forbidden_terms": [],
+      "required_tables": ["TINFCommission100", "TINFCommission100Verdict", "TINFCommission100VerdictDetail", "TINFCommission100EjraConfirm"],
+      "sql": "WITH VerdictAggregate AS (\n    SELECT V.TINFCommission100ID, MIN(V.ERegisterDate) AS FirstVerdictDate,\n           MAX(V.ERegisterDate) AS LastVerdictDate,\n           STRING_AGG(CAST(VD.Description AS nvarchar(max)), N' | ') AS VerdictDetailDescriptions\n    FROM TINFCommission100Verdict AS V\n    LEFT JOIN TINFCommission100VerdictDetail AS VD ON VD.TINFCommission100VerdictID = V.ID\n    GROUP BY V.TINFCommission100ID\n), ExecutionAggregate AS (\n    SELECT EC.TINFCommission100ID, MAX(EC.ERegisterDate) AS LastExecutionDate,\n           MAX(CAST(EC.Destruction AS int)) AS HasDestruction,\n           MAX(CAST(EC.Surcharge AS int)) AS HasSurcharge\n    FROM TINFCommission100EjraConfirm AS EC\n    GROUP BY EC.TINFCommission100ID\n)\nSELECT C.Number AS CommissionNumber, C.Description AS CommissionDescription, C.ERegisterDate AS CaseRegisterDate,\n       VA.FirstVerdictDate, VA.LastVerdictDate, VA.VerdictDetailDescriptions,\n       EA.LastExecutionDate, EA.HasDestruction, EA.HasSurcharge\nFROM TINFCommission100 AS C\nLEFT JOIN VerdictAggregate AS VA ON VA.TINFCommission100ID = C.ID\nLEFT JOIN ExecutionAggregate AS EA ON EA.TINFCommission100ID = C.ID\nWHERE C.Number = :commission_number\nORDER BY C.ERegisterDate DESC, C.ID DESC",
+      "explanation_fa": "رأی‌ها و اجرای حکم پیش از اتصال به پرونده تجمیع می‌شوند تا اتصال چندبه‌چند باعث تکرار یا افزایش کاذب داده نشود.",
+      "parameter": "commission_number"
+    },
+    {
+      "id": "final_verdict_fouls_single_column",
+      "priority": 190,
+      "required_groups": [["تخلفات در رای نهایی", "خلاف های رای نهایی", "تخلف های رای نهایی"], ["یک ستون", "تجمیعی"]],
+      "forbidden_terms": ["اجرای احکام"],
+      "required_tables": ["TINFCommission100", "TINFCommission100Verdict", "TINFCommission100VerdictDetail", "TINFCommission100Foul", "TBASCommission100Foul"],
+      "sql": "WITH DistinctFouls AS (\n    SELECT DISTINCT V.ID AS VerdictID, BF.Name AS FoulName\n    FROM TINFCommission100Verdict AS V\n    INNER JOIN TINFCommission100VerdictDetail AS VD ON VD.TINFCommission100VerdictID = V.ID\n    INNER JOIN TINFCommission100Foul AS CF ON CF.ID = VD.TINFCommission100FoulID\n    INNER JOIN TBASCommission100Foul AS BF ON BF.ID = CF.TBASCommission100FoulID\n    WHERE V.ObsoleteTINFVerdictID IS NULL\n      AND V.TBASCommission100ResultTypeID = 1\n), FoulAggregate AS (\n    SELECT DF.VerdictID, STRING_AGG(CAST(DF.FoulName AS nvarchar(max)), N' - ') AS Commission100FoulName\n    FROM DistinctFouls AS DF\n    GROUP BY DF.VerdictID\n)\nSELECT C.ID, C.Number AS CommissionNumber, C.FRegisterDate AS Commission100RegisterDate,\n       V.FRegisterDate AS VerdictRegisterDate, V.Description AS VerdictDescription,\n       V.Number AS VerdictNumber, FA.Commission100FoulName\nFROM TINFCommission100 AS C\nINNER JOIN TINFCommission100Verdict AS V ON V.TINFCommission100ID = C.ID\nLEFT JOIN FoulAggregate AS FA ON FA.VerdictID = V.ID\nWHERE V.ObsoleteTINFVerdictID IS NULL\n  AND V.TBASCommission100ResultTypeID = 1\nORDER BY V.FRegisterDate DESC, V.ID DESC",
+      "explanation_fa": "نام‌های یکتای خلاف مربوط به جزئیات رأی جاریِ بسته‌شده ابتدا استخراج و سپس در یک ستون تجمیع می‌شوند.",
+      "parameter": null
+    },
+    {
+      "id": "review_verdicts_in_execution",
+      "priority": 190,
+      "required_groups": [["تجدید نظر", "تجدیدنظر"], ["اجرای احکام", "مرحله اجرا", "اجرای حکم"]],
+      "forbidden_terms": ["میانگین زمان"],
+      "required_tables": ["TINFCommission100", "TINFCommission100Verdict", "TINFCommission100VerdictDetail", "TBASCommission100VerdictType", "TINFCommission100EjraConfirm"],
+      "sql": "WITH DistinctVerdictTypes AS (\n    SELECT DISTINCT VD.TINFCommission100VerdictID AS VerdictID, VT.Title AS VerdictTypeTitle\n    FROM TINFCommission100VerdictDetail AS VD\n    INNER JOIN TBASCommission100VerdictType AS VT ON VT.ID = VD.TBASCommission100VerdictTypeID\n), VerdictTypeAggregate AS (\n    SELECT DVT.VerdictID, STRING_AGG(CAST(DVT.VerdictTypeTitle AS nvarchar(max)), N' - ') AS VerdictTypes\n    FROM DistinctVerdictTypes AS DVT\n    GROUP BY DVT.VerdictID\n)\nSELECT C.ID, C.Number AS CommissionNumber, V.Number AS VerdictNumber,\n       EC.FRegisterDate AS ExecutionRegisterDate, C.TINFUserRegionID, VTA.VerdictTypes\nFROM TINFCommission100 AS C\nINNER JOIN TINFCommission100Verdict AS V ON V.TINFCommission100ID = C.ID\nCROSS APPLY (\n    SELECT TOP (1) E.ID, E.FRegisterDate, E.ERegisterDate\n    FROM TINFCommission100EjraConfirm AS E\n    WHERE E.TINFCommission100ID = C.ID\n    ORDER BY E.ERegisterDate DESC, E.ID DESC\n) AS EC\nLEFT JOIN VerdictTypeAggregate AS VTA ON VTA.VerdictID = V.ID\nWHERE V.TBASCommissionReferID = 1\n  AND V.ObsoleteTINFVerdictID IS NULL\nORDER BY C.ID, V.ID, EC.ID",
+      "explanation_fa": "پرونده‌های دارای رأی تجدیدنظر جاری که وارد اجرای احکام شده‌اند، همراه با انواع رأی تجمیع‌شده نمایش داده می‌شوند.",
+      "parameter": null
+    },
+    {
+      "id": "average_full_cycle_by_result",
+      "priority": 190,
+      "required_groups": [["میانگین زمان"], ["چرخه", "ثبت تا اجرای", "از ثبت تا اجرای"], ["نوع نتیجه", "نتیجه رای", "نتیجه رأی"]],
+      "forbidden_terms": [],
+      "required_tables": ["TINFCommission100", "TINFCommission100Verdict", "TINFCommission100EjraConfirm", "TBASCommission100ResultType"],
+      "sql": "WITH CaseCycles AS (\n    SELECT C.ID AS CommissionID, V.TBASCommission100ResultTypeID AS ResultTypeID,\n           C.ERegisterDate AS CaseRegisterDate, MAX(EC.ERegisterDate) AS ExecutionDate\n    FROM TINFCommission100 AS C\n    INNER JOIN TINFCommission100Verdict AS V ON V.TINFCommission100ID = C.ID\n    INNER JOIN TINFCommission100EjraConfirm AS EC ON EC.TINFCommission100ID = C.ID\n    WHERE V.ObsoleteTINFVerdictID IS NULL\n      AND V.TBASCommission100ResultTypeID = 1\n    GROUP BY C.ID, V.TBASCommission100ResultTypeID, C.ERegisterDate\n)\nSELECT RT.Name AS ResultType,\n       AVG(CAST(DATEDIFF(DAY, CC.CaseRegisterDate, CC.ExecutionDate) AS decimal(18,2))) AS AvgFullCycleDays,\n       COUNT_BIG(CC.CommissionID) AS CaseCount\nFROM CaseCycles AS CC\nINNER JOIN TBASCommission100ResultType AS RT ON RT.ID = CC.ResultTypeID\nGROUP BY RT.ID, RT.Name\nORDER BY AvgFullCycleDays DESC, RT.ID",
+      "explanation_fa": "چرخه فقط برای پرونده‌هایی محاسبه می‌شود که اجرای حکم ثبت‌شده دارند و هر پرونده پیش از میانگین‌گیری به یک رکورد تبدیل می‌شود.",
+      "parameter": null
+    },
+    {
+      "id": "changed_verdict_type_with_reduced_fine",
+      "priority": 190,
+      "required_groups": [["پس از اعتراض", "بعد از اعتراض"], ["نوع رای تغییر", "نوع رأی تغییر"], ["جریمه کاهش", "مبلغ جریمه کاهش"]],
+      "forbidden_terms": [],
+      "required_tables": ["TINFCommission100", "TINFCommission100Verdict", "TINFCommission100VerdictDetail"],
+      "sql": "SELECT C.Number AS CommissionNumber, V1.Number AS OriginalVerdictNumber,\n       V2.Number AS NewVerdictNumber, V1.SurchargePrice AS OriginalFine,\n       V2.SurchargePrice AS NewFine, V1.SurchargePrice - V2.SurchargePrice AS ReductionAmount\nFROM TINFCommission100 AS C\nINNER JOIN TINFCommission100Verdict AS V1 ON V1.TINFCommission100ID = C.ID\nINNER JOIN TINFCommission100Verdict AS V2 ON V2.ID = V1.ObsoleteTINFVerdictID\n                                            AND V2.TINFCommission100ID = C.ID\nWHERE V1.HasObjection = 1\n  AND COALESCE(V2.SurchargePrice, 0) < COALESCE(V1.SurchargePrice, 0)\n  AND (\n      EXISTS (\n          SELECT 1 FROM TINFCommission100VerdictDetail AS D1\n          WHERE D1.TINFCommission100VerdictID = V1.ID\n            AND NOT EXISTS (\n                SELECT 1 FROM TINFCommission100VerdictDetail AS D2\n                WHERE D2.TINFCommission100VerdictID = V2.ID\n                  AND D2.TBASCommission100VerdictTypeID = D1.TBASCommission100VerdictTypeID\n            )\n      )\n      OR EXISTS (\n          SELECT 1 FROM TINFCommission100VerdictDetail AS D2\n          WHERE D2.TINFCommission100VerdictID = V2.ID\n            AND NOT EXISTS (\n                SELECT 1 FROM TINFCommission100VerdictDetail AS D1\n                WHERE D1.TINFCommission100VerdictID = V1.ID\n                  AND D1.TBASCommission100VerdictTypeID = D2.TBASCommission100VerdictTypeID\n            )\n      )\n  )\nORDER BY ReductionAmount DESC, C.Number",
+      "explanation_fa": "جهت زنجیره رأی اصلاح شده است؛ علاوه بر کاهش مبلغ سربرگ، تفاوت مجموعه انواع رأی در جزئیات نیز الزاماً کنترل می‌شود.",
+      "parameter": null
+    },
+    {
+      "id": "floor_fine_distribution",
+      "priority": 190,
+      "required_groups": [["توزیع طبقات", "طبقات وقوع خلاف", "طبقه وقوع خلاف"], ["مبلغ جریمه", "جریمه"]],
+      "forbidden_terms": [],
+      "required_tables": ["TINFCommission100", "TINFCommission100Foul", "TINFCommission100Verdict", "TINFCommission100VerdictDetail", "TINFCommission100EjraConfirm"],
+      "sql": "WITH ExecutionCases AS (\n    SELECT EC.TINFCommission100ID,\n           MAX(CASE WHEN EC.Destruction = 1 THEN 1 ELSE 0 END) AS HasDestruction\n    FROM TINFCommission100EjraConfirm AS EC\n    GROUP BY EC.TINFCommission100ID\n)\nSELECT CF.Floor, COUNT(DISTINCT C.ID) AS CaseCount,\n       AVG(CAST(VD.Price AS decimal(18,2))) AS AvgFine,\n       SUM(COALESCE(VD.Price, 0)) AS TotalFine,\n       COUNT(DISTINCT CASE WHEN EC.HasDestruction = 1 THEN C.ID END) AS DestructionCount\nFROM TINFCommission100 AS C\nINNER JOIN TINFCommission100Foul AS CF ON CF.TINFCommission100ID = C.ID\nINNER JOIN TINFCommission100VerdictDetail AS VD ON VD.TINFCommission100FoulID = CF.ID\nINNER JOIN TINFCommission100Verdict AS V ON V.ID = VD.TINFCommission100VerdictID\n                                         AND V.TINFCommission100ID = C.ID\nLEFT JOIN ExecutionCases AS EC ON EC.TINFCommission100ID = C.ID\nWHERE CF.Floor IS NOT NULL\n  AND V.ObsoleteTINFVerdictID IS NULL\nGROUP BY CF.Floor\nORDER BY AvgFine DESC, CF.Floor",
+      "explanation_fa": "مبلغ رأی از طریق شناسه خلاف به همان طبقه متصل می‌شود؛ اتصال اشتباه شناسه پرونده به شناسه رأی حذف شده است.",
+      "parameter": null
+    },
+    {
+      "id": "structure_value_with_low_fine",
+      "priority": 190,
+      "required_groups": [["ارزش اعیانی", "tbasstructuredetailid"], ["جریمه صفر", "جریمه کم", "خیلی کم"]],
+      "forbidden_terms": [],
+      "required_tables": ["TINFCommission100", "TINFCommission100Verdict", "TINFCommission100VerdictDetail"],
+      "sql": "SELECT C.Number AS CommissionNumber, VD.TradingValue, VD.Price AS FineAmount, VD.Description\nFROM TINFCommission100 AS C\nINNER JOIN TINFCommission100Verdict AS V ON V.TINFCommission100ID = C.ID\nINNER JOIN TINFCommission100VerdictDetail AS VD ON VD.TINFCommission100VerdictID = V.ID\nWHERE V.ObsoleteTINFVerdictID IS NULL\n  AND VD.TBASStructureDetailID IS NOT NULL\n  AND COALESCE(VD.Price, 0) < 1000000\nORDER BY COALESCE(VD.Price, 0), C.Number",
+      "explanation_fa": "جزئیات رأی از مسیر صحیح رأی متصل شده و آستانه «خیلی کم» مطابق نمونه کارفرما یک میلیون در نظر گرفته شده است.",
+      "parameter": null
+    },
+    {
+      "id": "combined_destruction_and_fine_execution",
+      "priority": 190,
+      "required_groups": [["مرحله اجرا", "در اجرا"], ["قلع", "تخریب"], ["جریمه"], ["ترکیبی", "هم"]],
+      "forbidden_terms": ["تجدید نظر"],
+      "required_tables": ["TINFCommission100", "TINFCommission100EjraConfirm", "TINFCommission100Verdict", "TINFCommission100VerdictDetail"],
+      "sql": "SELECT C.Number AS CommissionNumber, C.Description AS CommissionDescription,\n       EC.DestructionDescription, EC.SurchargeDescription,\n       SUM(COALESCE(VD.Price, 0)) AS FineAmount\nFROM TINFCommission100 AS C\nINNER JOIN TINFCommission100EjraConfirm AS EC ON EC.TINFCommission100ID = C.ID\nINNER JOIN TINFCommission100Verdict AS V ON V.TINFCommission100ID = C.ID\nINNER JOIN TINFCommission100VerdictDetail AS VD ON VD.TINFCommission100VerdictID = V.ID\nWHERE EC.Destruction = 1\n  AND EC.Surcharge = 1\n  AND V.ObsoleteTINFVerdictID IS NULL\nGROUP BY C.ID, C.Number, C.Description, EC.ID, EC.DestructionDescription, EC.SurchargeDescription\nORDER BY C.Number, EC.ID",
+      "explanation_fa": "پرونده‌های اجرای ترکیبی قلع و جریمه انتخاب می‌شوند و مبلغ جزئیات فقط از رأی جاری همان پرونده جمع می‌شود.",
+      "parameter": null
+    },
+    {
+      "id": "most_used_violation_value_type",
+      "priority": 190,
+      "required_groups": [["پرکاربردترین واحد تخلف", "بیشترین واحد تخلف", "واحد تخلف در پرونده"]],
+      "forbidden_terms": [],
+      "required_tables": ["TINFCommission100VerdictDetail", "TBASCommission100ValueType"],
+      "sql": "SELECT VT.ID AS ValueTypeID, VT.Title AS ValueTypeTitle, COUNT_BIG(VD.ID) AS UsageCount,\n       AVG(CAST(VD.Amount AS decimal(18,2))) AS AvgAmount,\n       AVG(CAST(VD.TradingValue AS decimal(18,2))) AS AvgTradingValue,\n       SUM(COALESCE(VD.Price, 0)) AS TotalFine\nFROM TINFCommission100VerdictDetail AS VD\nINNER JOIN TBASCommission100ValueType AS VT ON VT.ID = VD.TBASCommission100ValueTypeID\nGROUP BY VT.ID, VT.Title\nORDER BY UsageCount DESC, VT.ID",
+      "explanation_fa": "واحدهای تخلف بر اساس تعداد استفاده در جزئیات رأی رتبه‌بندی و شاخص‌های مبلغ و مقدار نیز محاسبه می‌شوند.",
+      "parameter": null
+    },
+    {
+      "id": "final_verdict_over_60_days",
+      "priority": 190,
+      "required_groups": [["ثبت و صدور رای نهایی", "صدور رای نهایی", "تا رای نهایی"], ["بیش از 60 روز", "بیش از ۶۰ روز", "بیشتر از 60 روز"]],
+      "forbidden_terms": [],
+      "required_tables": ["TINFCommission100", "TINFCommission100Verdict"],
+      "sql": "SELECT C.Number AS CommissionNumber, C.ERegisterDate AS CaseRegisterDate,\n       V.ERegisterDate AS VerdictDate,\n       DATEDIFF(DAY, C.ERegisterDate, V.ERegisterDate) AS DaysToVerdict\nFROM TINFCommission100 AS C\nINNER JOIN TINFCommission100Verdict AS V ON V.TINFCommission100ID = C.ID\nWHERE V.ObsoleteTINFVerdictID IS NULL\n  AND V.TBASCommission100ResultTypeID = 1\n  AND DATEDIFF(DAY, C.ERegisterDate, V.ERegisterDate) > 60\nORDER BY DaysToVerdict DESC, C.Number",
+      "explanation_fa": "فاصله زمانی فقط تا رأی جاریِ بسته‌شده محاسبه می‌شود و اتصال غیرضروری جزئیات رأی حذف شده است.",
+      "parameter": null
+    },
+    {
+      "id": "latest_commission_cases",
+      "priority": 100,
+      "required_groups": [["آخرین پرونده ها", "جدیدترین پرونده ها", "پرونده های اخیر", "فهرست آخرین پرونده ها", "لیست آخرین پرونده ها"]],
+      "forbidden_terms": ["رای", "رأی", "جریمه", "شماره پرونده", "وضعیت پرونده"],
+      "required_tables": ["TINFCommission100", "TBASCommission100State"],
+      "sql": "SELECT TOP (20)\n    C.ID,\n    C.Number AS CommissionNumber,\n    C.FRegisterDate,\n    C.TBASCommission100StateID,\n    S.Name AS StateName\nFROM TINFCommission100 AS C\nLEFT JOIN TBASCommission100State AS S ON S.ID = C.TBASCommission100StateID\nORDER BY C.FRegisterDate DESC, C.ID DESC",
+      "explanation_fa": "۲۰ پرونده اخیر ماده ۱۰۰ بر اساس تاریخ ثبت و سپس شناسه به‌صورت قطعی مرتب می‌شوند؛ نام وضعیت نیز در صورت وجود نمایش داده می‌شود.",
+      "parameter": null
+    },
+    {
+      "id": "users_with_commission_count",
+      "priority": 100,
+      "required_groups": [["تمام کاربران", "همه کاربران"], ["تعداد پرونده", "پرونده های ثبت شده"]],
+      "forbidden_terms": [],
+      "required_tables": ["TINFUser", "TINFUserRegion", "TINFCommission100"],
+      "sql": "SELECT U.ID, U.UserName, COUNT(C.ID) AS CommissionCount\nFROM TINFUser AS U\nLEFT JOIN TINFUserRegion AS UR ON UR.TINFUserID = U.ID\nLEFT JOIN TINFCommission100 AS C ON C.TINFUserRegionID = UR.ID\nGROUP BY U.ID, U.UserName\nORDER BY CommissionCount DESC, U.ID",
+      "explanation_fa": "کاربران از TINFUser شروع می‌شوند و LEFT JOIN کاربران بدون پرونده را با تعداد صفر نگه می‌دارد.",
+      "parameter": null
+    },
+    {
+      "id": "latest_verdict_detail_fine_total_by_case",
+      "priority": 120,
+      "required_groups": [["آخرین رای", "آخرین رأی", "رای نهایی"], ["جمع جریمه", "مجموع جریمه", "کل جریمه"]],
+      "forbidden_terms": [],
+      "required_tables": ["TINFCommission100", "TINFCommission100Verdict", "TINFCommission100VerdictDetail"],
+      "sql": "WITH LatestVerdict AS (\n    SELECT TOP (1) V.ID\n    FROM TINFCommission100 AS C\n    INNER JOIN TINFCommission100Verdict AS V ON V.TINFCommission100ID = C.ID\n    WHERE C.Number = :commission_number\n      AND V.ObsoleteTINFVerdictID IS NULL\n    ORDER BY V.FRegisterDate DESC, V.ID DESC\n)\nSELECT SUM(COALESCE(VD.Price, 0)) AS FineTotal\nFROM LatestVerdict AS V\nLEFT JOIN TINFCommission100VerdictDetail AS VD ON VD.TINFCommission100VerdictID = V.ID",
+      "explanation_fa": "جمع جریمه جزئیات رأی فعلی از VerdictDetail.Price محاسبه می‌شود.",
+      "parameter": "commission_number"
+    },
+    {
+      "id": "latest_verdict_number_by_case",
+      "priority": 110,
+      "required_groups": [["آخرین رای", "آخرین رأی", "رای نهایی"], ["شماره رای", "شماره رأی", "شماره آخرین رای", "شماره آخرین رأی"]],
+      "forbidden_terms": ["جریمه"],
+      "required_tables": ["TINFCommission100", "TINFCommission100Verdict"],
+      "sql": "SELECT TOP (1) V.Number AS VerdictNumber\nFROM TINFCommission100 AS C\nINNER JOIN TINFCommission100Verdict AS V ON V.TINFCommission100ID = C.ID\nWHERE C.Number = :commission_number\n  AND V.ObsoleteTINFVerdictID IS NULL\nORDER BY V.FRegisterDate DESC, V.ID DESC",
+      "explanation_fa": "پرونده با C.Number و رأی فعلی با ObsoleteTINFVerdictID IS NULL انتخاب می‌شود.",
+      "parameter": "commission_number"
+    },
+    {
+      "id": "latest_case_state_by_case",
+      "priority": 90,
+      "required_groups": [["آخرین وضعیت", "وضعیت خلاف", "وضعیت پرونده"]],
+      "forbidden_terms": ["رای", "رأی", "جریمه", "بر اساس مرحله", "به تفکیک مرحله"],
+      "required_tables": ["TINFCommission100", "TBASCommission100State"],
+      "sql": "SELECT C.Number AS CommissionNumber, S.Name AS StateName\nFROM TINFCommission100 AS C\nINNER JOIN TBASCommission100State AS S ON S.ID = C.TBASCommission100StateID\nWHERE C.Number = :commission_number",
+      "explanation_fa": "وضعیت جاری پرونده از TBASCommission100State و شناسه وضعیت ثبت‌شده روی پرونده خوانده می‌شود.",
+      "parameter": "commission_number"
+    }
+  ]
+}
