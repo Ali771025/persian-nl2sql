@@ -1,5 +1,10 @@
 # Persian NL2SQL
 
+<!-- project-contact:start -->
+**درخواست پروژه و همکاری با یوسف عمرانی:** [ارسال ایمیل](mailto:aliomrani916@gmail.com) · **aliomrani916@gmail.com** · [خدمات و تماس](https://ali771025.github.io/software-portfolio/contact/) · [معرفی نمونه‌کار](https://ali771025.github.io/software-portfolio/#projects)
+<!-- project-contact:end -->
+
+
 این مخزن نسخه عمومی و کم‌حجم سورس پروژه برای معرفی نمونه‌کار است.
 
 A Python service for translating Persian analytical questions into SQL through schema retrieval and policy checks.
